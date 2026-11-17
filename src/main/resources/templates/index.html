@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="uk" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Spring AI LAB5</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+<div class="container py-4">
+  <h1 class="h3 mb-3">Структурування даних про статтю (Spring AI + GPT-4o-mini)</h1>
+
+  <form th:action="@{/generate-all}" method="post" class="card card-body mb-4">
+    <label for="msg" class="form-label">Цитування статті (неструктурований текст)</label>
+    <textarea id="msg" name="message" rows="4" class="form-control" required
+              th:text="${message}"></textarea>
+    <div class="mt-3 d-flex gap-2">
+      <button type="submit" class="btn btn-primary">Згенерувати</button>
+      <button type="button" class="btn btn-outline-secondary"
+              onclick="document.getElementById('msg').value = document.getElementById('example').textContent.trim()">
+        Вставити приклад
+      </button>
+    </div>
+  </form>
+
+  <div id="example" hidden>Лозовик Ю.М. Розвиток штучного інтелекту в економіці. Журнал "Цифрова Економіка", Том 5, Випуск 2, 2025 рік, Київ, стор. 10-20. DOI: 10.1234/example.</div>
+
+  <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+  <div th:if="${generatedAt}" class="alert alert-info d-flex flex-wrap gap-4">
+    <span>🕒 Час генерації: <strong th:text="${generatedAt}"></strong></span>
+    <span>⏱ Тривалість: <strong th:text="${elapsedMs}"></strong> мс</span>
+  </div>
+
+  <div class="row g-3" th:if="${fields}">
+    <div class="col-lg-7">
+      <div class="table-responsive">
+        <table class="table table-sm table-striped table-bordered bg-white">
+          <thead class="table-dark">
+          <tr><th>Поле</th><th>Значення</th></tr>
+          </thead>
+          <tbody>
+          <tr th:each="f : ${fields}">
+            <td><code th:text="${f.key}"></code></td>
+            <td th:text="${f.value}"></td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="col-lg-5">
+      <h2 class="h6">JSON</h2>
+      <pre class="bg-white border rounded p-3 small" th:text="${json}"></pre>
+      <details th:if="${rawResponse}" class="small">
+        <summary>Сира відповідь моделі</summary>
+        <pre class="bg-white border rounded p-3" th:text="${rawResponse}"></pre>
+      </details>
+    </div>
+  </div>
+</div>
+</body>
+</html>
